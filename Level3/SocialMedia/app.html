@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogSpace - Your Creative Platform</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">BlogSpace</div>
+                <div class="nav-links">
+                    <button class="nav-btn" onclick="showSection('home')">Home</button>
+                    <button class="nav-btn" onclick="showSection('create')" id="createBtn" style="display:none;">Write Post</button>
+                    <button class="nav-btn" onclick="showSection('profile')" id="profileBtn" style="display:none;">Profile</button>
+                    <button class="nav-btn" onclick="showSection('login')" id="loginBtn">Login</button>
+                    <button class="nav-btn" onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Search Section -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search blog posts..." id="searchInput">
+            <button class="search-btn" onclick="searchPosts()">🔍</button>
+        </div>
+
+        <!-- Login/Register Section -->
+        <div id="loginSection" class="form-container">
+            <h2>Login / Register</h2>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label for="username">Username (for registration):</label>
+                <input type="text" id="username" placeholder="Choose a username">
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="login()">Login</button>
+                <button class="btn btn-secondary" onclick="register()">Register</button>
+            </div>
+        </div>
+
+        <!-- Create Post Section -->
+        <div id="createSection" class="form-container hidden">
+            <h2>Create New Post</h2>
+            <div class="form-group">
+                <label for="postTitle">Title:</label>
+                <input type="text" id="postTitle" placeholder="Enter post title">
+            </div>
+            <div class="form-group">
+                <label for="postContent">Content:</label>
+                <textarea id="postContent" placeholder="Write your blog post content here..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="createPost()">Publish Post</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="posts-container">
+                <div id="homeSection">
+                    <h2>Latest Blog Posts</h2>
+                    <div id="postsContainer">
+                        <!-- Posts will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profileSection" class="hidden">
+                    <h2>User Profile</h2>
+                    <div id="userProfileContainer">
+                        <!-- User profile will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="user-profile" id="sidebarProfile" style="display:none;">
+                    <div class="profile-avatar" id="sidebarAvatar">U</div>
+                    <div class="profile-name" id="sidebarName">Guest User</div>
+                    <div class="profile-email" id="sidebarEmail">guest@example.com</div>
+                </div>
+                
+                <h3>Categories</h3>
+                <ul style="list-style:none; padding:0;">
+                    <li style="padding:8px 0; border-bottom:1px solid #eee;"><a href="#" style="text-decoration:none; color:#667eea;">Technology</a></li>
+                    <li style="padding:8px 0; border-bottom:1px solid #eee;"><a href="#" style="text-decoration:none; color:#667eea;">Lifestyle</a></li>
+                    <li style="padding:8px 0; border-bottom:1px solid #eee;"><a href="#" style="text-decoration:none; color:#667eea;">Travel</a></li>
+                    <li style="padding:8px 0; border-bottom:1px solid #eee;"><a href="#" style="text-decoration:none; color:#667eea;">Food</a></li>
+                </ul>
+                
+                <h3 style="margin-top:30px;">Recent Posts</h3>
+                <div id="recentPosts">
+                    <!-- Recent posts will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script src="./app.js"></script>
+</body>
+</html>
