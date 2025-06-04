@@ -53,10 +53,6 @@ function showSection(section) {
     }
 }
 
-export default function handler(req, res) {
-  res.status(200).json({ message: "Hello from Vercel Serverless" });
-}
-
 function register() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
