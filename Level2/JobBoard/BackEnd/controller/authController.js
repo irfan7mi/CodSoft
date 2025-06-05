@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Candidate = require('../models/users');
 const path = require('path');
+const validator = require('validator');
 const fs = require('fs');
 const upload = require('../middleware/upload');
 
@@ -51,7 +52,7 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
     if (!validator.isEmail(email)) {
-      return res.json({success:false, message:"Please enter valid email address!"})
+      return res.status(400).json({success:false, message:"Please enter valid email address!"});
     }
     if (password.length<8) {
       return res.json({success:false, message:"Please enter strong password!"})
@@ -74,7 +75,7 @@ const signup = async (req, res) => {
   }
   catch (error) {
     res.status(500).json({ message: 'Server error during signup' });
-    console.error("Signup Error:", err); 
+    console.error("Signup Error:", error); 
   }
 };
 
