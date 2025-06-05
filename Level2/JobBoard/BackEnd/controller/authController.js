@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/users');
+const Candidate = require('../models/users');
 const path = require('path');
 const fs = require('fs');
 const upload = require('../middleware/upload');
@@ -9,14 +9,14 @@ const signup1 = async (req, res) => {
   try {
     const { name, mobile, email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await Candidate.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
+    const candidate = new Candidate({
       name,
       mobile,
       email,
@@ -24,14 +24,14 @@ const signup1 = async (req, res) => {
       role: 'candidate' 
     });
 
-    await user.save();
+    await candidate.save();
 
-    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, "random#secret", {
+    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, "random#secret", {
       expiresIn: '1h'
     });
 
     res.status(201).json({
-      user: { name: user.name, email: user.email, role: user.role },
+      user: { name: candidate.name, email: candidate.email, role: candidate.role },
       token
     });
   } catch (error) {
@@ -46,7 +46,7 @@ const createToken = (id) => {
 const signup = async (req, res) => {
   const {name, mobile, email, password} = req.body
   try{
-    const existingUser = await User.findOne({ email });
+    const existingUser = await Candidate.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -67,10 +67,9 @@ const signup = async (req, res) => {
       role: 'candidate',
       cartData: []
     })
-    let user = await newUser.save()
-    const token = createToken(user._id)
-    let userId = await user._id
-    return res.send({user: { name: user.name, email: user.email, role: user.role },
+    let candidate = await newUser.save()
+    const token = createToken(candidate._id)
+    return res.send({user: { name: candidate.name, email: candidate.email, role: candidate.role },
       token})
   }
   catch (error) {
@@ -81,20 +80,20 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
+    const candidate = await Candidate.findOne({ email });
+    if (!candidate) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, candidate.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your_jwt_secret', {
+    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, 'your_jwt_secret', {
       expiresIn: '1h'
     });
 
     res.status(200).json({
-      user: { name: user.name, email: user.email, role: user.role },
+      user: { name: candidate.name, email: candidate.email, role: candidate.role },
       token
     });
   } catch (error) {
@@ -104,8 +103,8 @@ const login = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password');
-    if (!user) {
+    const candidate = await Candidate.findById(req.candidate.userId).select('-password');
+    if (!candidate) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ user });
@@ -125,7 +124,7 @@ const updateProfile = async (req, res) => {
 
     const skillsArray = Array.isArray(skills) ? skills : skills.split(',').map(skill => skill.trim()).filter(skill => skill);
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Candidate.findByIdAndUpdate(
       req.user.userId,
       {
         name,
@@ -162,7 +161,7 @@ const uploadResume = [
         return res.status(400).json({ message: 'No file uploaded' });
       }
       const resumePath = `/uploads/resumes/${req.file.filename}`;
-      const updatedUser = await User.findByIdAndUpdate(
+      const updatedUser = await Candidate.findByIdAndUpdate(
         req.user.userId,
         { resume: resumePath },
         { new: true }
