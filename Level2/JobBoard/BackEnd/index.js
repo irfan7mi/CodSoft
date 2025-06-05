@@ -5,6 +5,7 @@ const authRoutes = require('./routes/authRoute');
 const jobRoutes = require('./routes/jobRoute');
 const applnRoutes = require('./routes/applnRoute');
 const savedJobRoutes = require('./routes/savedJobRoute');
+const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario';
 
 const app = express();
 
@@ -15,9 +16,14 @@ app.use(cors({
 }));
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(url);
+    console.log('DB Connected');
+  } catch (err) {
+    console.error('DB Connection Error:', err);
+  }
+};
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
