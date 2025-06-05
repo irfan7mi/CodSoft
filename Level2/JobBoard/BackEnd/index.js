@@ -9,7 +9,7 @@ const savedJobRoutes = require('./routes/savedJobRoute');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://job-board-client-six.vercel.app',
   methods: ['GET', 'POST', 'DELETE'],
   credentials: true
 }));
