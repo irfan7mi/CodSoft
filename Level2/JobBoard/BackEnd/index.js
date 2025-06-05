@@ -30,7 +30,7 @@ const createToken = (id) => {
 app.post("/api/auth/login", async (req, res) => {
   const{email, password} = req.body
   try{
-    let user = await AdminModel.findOne({email})
+    let user = await UserModel.findOne({email})
     if (!user) {
       return res.json({success: false, message: "Admin doesn't exist!"})
     }
@@ -72,7 +72,7 @@ app.post("/api/auth/signup",async (req, res) => {
     })
     let user = await newUser.save()
     const token = createToken(user._id)
-    return res.send({user: { name: candidate.name, email: candidate.email, role: candidate.role },
+    return res.send({user: { name: user.name, email: user.email, role: user.role },
       token})
   }
   catch (e) {
@@ -86,7 +86,6 @@ mongoose.connect(url)
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 
-app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/application', applnRoutes);
 app.use('/api/saved-jobs', savedJobRoutes);
