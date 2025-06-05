@@ -31,7 +31,6 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
         },
         withCredentials: true
       });
-      console.log("Data",formData);
       
       const userData = {
         name: response.data.user.name || 'John Doe',
