@@ -59,7 +59,7 @@ const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
     
-    const newUser = new UserModel({
+    const newUser = new Candidate({
       name: name,
       mobile: mobile,
       email: email,
@@ -179,4 +179,4 @@ const uploadResume = [
   }
 ];
 
-module.exports = { signup, login, getProfile, updateProfile, uploadResume };
+module.exports = { signup, login, getProfile, updateProfile };
