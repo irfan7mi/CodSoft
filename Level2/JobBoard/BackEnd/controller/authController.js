@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const upload = require('../middleware/upload');
 
-const signup = async (req, res) => {
+const signup1 = async (req, res) => {
   try {
     const { name, mobile, email, password } = req.body;
 
@@ -35,6 +35,45 @@ const signup = async (req, res) => {
       token
     });
   } catch (error) {
+    res.status(500).json({ message: 'Server error during signup' });
+  }
+};
+
+const createToken = (id) => {
+  return jwt.sign({id}, JWT_SECRET)
+}
+
+const signup = async (req, res) => {
+  const {name, mobile, email, password} = req.body
+  try{
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+    if (!validator.isEmail(email)) {
+      return res.json({success:false, message:"Please enter valid email address!"})
+    }
+    if (password.length<8) {
+      return res.json({success:false, message:"Please enter strong password!"})
+    }
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+    
+    const newUser = new UserModel({
+      name: name,
+      mobile: mobile,
+      email: email,
+      password: hashedPassword,
+      role: 'candidate',
+      cartData: []
+    })
+    let user = await newUser.save()
+    const token = createToken(user._id)
+    let userId = await user._id
+    return res.send({user: { name: user.name, email: user.email, role: user.role },
+      token})
+  }
+  catch (error) {
     res.status(500).json({ message: 'Server error during signup' });
   }
 };

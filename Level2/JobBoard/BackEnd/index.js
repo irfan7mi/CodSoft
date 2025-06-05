@@ -10,7 +10,7 @@ const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@d
 const app = express();
 
 app.use(cors({
-  origin: 'https://job-board-client-blond.vercel.app',
+  origin: "*",
   methods: ['GET', 'POST', 'DELETE'],
   credentials: true
 }));
