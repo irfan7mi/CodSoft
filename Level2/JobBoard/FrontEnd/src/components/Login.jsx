@@ -25,7 +25,12 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
     setError('');
     try {
       const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-      const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData);
+      const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
       const userData = {
         name: response.data.user.name || 'John Doe',
         email: response.data.user.email,
