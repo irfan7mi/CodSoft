@@ -47,7 +47,7 @@ app.post("api/auth/login", async (req, res) => {
   }
 })
 
-app.post("api/auth/signin",async (req, res) => {
+app.post("api/auth/signup",async (req, res) => {
   const {name, mobile, email, password} = req.body
   try{
     const exist = await UserModel.findOne({email})
