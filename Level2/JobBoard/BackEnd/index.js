@@ -16,14 +16,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(url);
-    console.log('DB Connected');
-  } catch (err) {
-    console.error('DB Connection Error:', err);
-  }
-};
+mongoose.connect(url)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
