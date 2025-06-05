@@ -15,7 +15,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=jobboard', {
+mongoose.connect('mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
