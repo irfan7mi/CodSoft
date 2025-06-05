@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 const JobList = ({ setCurrentPage }) => {
-  const [isApplied] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
   const [jobs, setJobs] = useState([
     {
       id: "",
@@ -22,7 +22,6 @@ const JobList = ({ setCurrentPage }) => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          setError('Please log in to view jobs.');
           return;
         }
         const response = await axios.get('http://localhost:5000/api/jobs/list', {
