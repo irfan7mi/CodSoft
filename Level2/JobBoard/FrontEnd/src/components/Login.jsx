@@ -110,7 +110,7 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
               className="toggle-auth" 
               onClick={() => setIsSignUp(!isSignUp)}
             >
-              {isSignUp ? ' Login' : ' Sign Up'}
+              {isSignUp ? ' Login' : ' gn Up'}
             </span>
           </p>
         </div>
