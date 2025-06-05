@@ -34,7 +34,7 @@ const EmployeeDashboard = () => {
           setError('Please log in to view jobs.');
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/jobs/list', {
+        const response = await axios.get('https://codsoft-fctc.onrender.com/api/jobs/list', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setJobs(response.data.jobs.map(job => ({
@@ -64,7 +64,7 @@ const EmployeeDashboard = () => {
           setError('Please log in to view applications.');
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/applications/list', {
+        const response = await axios.get('https://codsoft-fctc.onrender.com/api/applications/list', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setApplications(response.data.applications.map(app => ({
@@ -104,7 +104,7 @@ const EmployeeDashboard = () => {
         throw new Error('Please log in to post a job');
       }
 
-      const response = await axios.post('http://localhost:5000/api/jobs/post', newJob, {
+      const response = await axios.post('https://codsoft-fctc.onrender.com/api/jobs/post', newJob, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -153,7 +153,7 @@ const EmployeeDashboard = () => {
         throw new Error('Please log in to update a job');
       }
 
-      const response = await axios.put(`http://localhost:5000/api/jobs/update/${editJobId}`, newJob, {
+      const response = await axios.put(`https://codsoft-fctc.onrender.com/api/jobs/update/${editJobId}`, newJob, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -201,7 +201,7 @@ const EmployeeDashboard = () => {
         setError('Please log in to view job details.');
         return;
       }
-      const response = await axios.get(`http://localhost:5000/api/jobs/view/${jobId}`, {
+      const response = await axios.get(`https://codsoft-fctc.onrender.com/api/jobs/view/${jobId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNewJob({
@@ -232,7 +232,7 @@ const EmployeeDashboard = () => {
         setError('Please log in to delete a job.');
         return;
       }
-      await axios.delete(`http://localhost:5000/api/jobs/delete/${jobId}`, {
+      await axios.delete(`https://codsoft-fctc.onrender.com/api/jobs/delete/${jobId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setJobs(jobs.filter(job => job.id !== jobId));

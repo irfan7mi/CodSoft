@@ -30,7 +30,7 @@ const CandidateDashboard = () => {
           return;
         }
 
-        const profileResponse = await axios.get('http://localhost:5000/api/auth/profile', {
+        const profileResponse = await axios.get('https://codsoft-fctc.onrender.com/api/auth/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfile({
@@ -44,7 +44,7 @@ const CandidateDashboard = () => {
           summary: profileResponse.data.user.summary || ''
         });
 
-        const applicationsResponse = await axios.get('http://localhost:5000/api/applications/my-applications', {
+        const applicationsResponse = await axios.get('https://codsoft-fctc.onrender.com/api/applications/my-applications', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setApplications(applicationsResponse.data.applications.map(app => ({
@@ -61,7 +61,7 @@ const CandidateDashboard = () => {
           jobId: app.job._id
         })));
 
-        const savedJobsResponse = await axios.get('http://localhost:5000/api/saved-jobs/list', {
+        const savedJobsResponse = await axios.get('https://codsoft-fctc.onrender.com/api/saved-jobs/list', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSavedJobs(savedJobsResponse.data.savedJobs.map(saved => ({
@@ -109,7 +109,7 @@ const CandidateDashboard = () => {
       if (!token) {
         throw new Error('Please log in to update your profile');
       }
-      const response = await axios.post('http://localhost:5000/api/auth/profile', profile, {
+      const response = await axios.post('https://codsoft-fctc.onrender.com/api/auth/profile', profile, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile({
@@ -143,7 +143,7 @@ const CandidateDashboard = () => {
       }
       const formData = new FormData();
       formData.append('resume', resume);
-      await axios.post('http://localhost:5000/api/auth/upload-resume', formData, {
+      await axios.post('https://codsoft-fctc.onrender.com/api/auth/upload-resume', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -164,7 +164,7 @@ const CandidateDashboard = () => {
         setError('Please log in to withdraw an application.');
         return;
       }
-      await axios.delete(`http://localhost:5000/api/applications/withdraw/${applicationId}`, {
+      await axios.delete(`https://codsoft-fctc.onrender.com/api/applications/withdraw/${applicationId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setApplications(applications.filter(app => app.id !== applicationId));
@@ -182,7 +182,7 @@ const CandidateDashboard = () => {
         setError('Please log in to apply for a job.');
         return;
       }
-      const response = await axios.post('http://localhost:5000/api/applications/apply', { jobId }, {
+      const response = await axios.post('https://codsoft-fctc.onrender.com/api/applications/apply', { jobId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setApplications([...applications, {
@@ -213,7 +213,7 @@ const CandidateDashboard = () => {
         setError('Please log in to remove a saved job.');
         return;
       }
-      await axios.delete(`http://localhost:5000/api/saved-jobs/remove/${jobId}`, {
+      await axios.delete(`https://codsoft-fctc.onrender.com/api/saved-jobs/remove/${jobId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSavedJobs(savedJobs.filter(saved => saved.jobId !== jobId));

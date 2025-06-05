@@ -24,7 +24,7 @@ const JobList = ({ setCurrentPage }) => {
         if (!token) {
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/jobs/list', {
+        const response = await axios.get('https://codsoft-fctc.onrender.com/api/jobs/list', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setJobs(response.data.jobs.map(job => ({
@@ -54,13 +54,13 @@ const JobList = ({ setCurrentPage }) => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const applicationResponse = await axios.get('http://localhost:5000/api/applications/my-applications', {
+        const applicationResponse = await axios.get('https://codsoft-fctc.onrender.com/api/applications/my-applications', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const hasApplied = applicationResponse.data.applications.some(app => app.job._id === job.id);
         setIsApplied(hasApplied);
 
-        const savedResponse = await axios.get('http://localhost:5000/api/saved-jobs/list', {
+        const savedResponse = await axios.get('https://codsoft-fctc.onrender.com/api/saved-jobs/list', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const hasSaved = savedResponse.data.savedJobs.some(saved => saved.job._id === job.id);
@@ -84,7 +84,7 @@ const JobList = ({ setCurrentPage }) => {
       }
 
       const response = await axios.post(
-        'http://localhost:5000/api/applications/apply',
+        'https://codsoft-fctc.onrender.com/api/applications/apply',
         { jobId: job.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -110,7 +110,7 @@ const JobList = ({ setCurrentPage }) => {
       }
 
       const response = await axios.post(
-        'http://localhost:5000/api/jobs/save',
+        'https://codsoft-fctc.onrender.com/api/jobs/save',
         { jobId: job.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
