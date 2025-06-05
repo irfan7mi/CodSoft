@@ -6,6 +6,13 @@ const jobRoutes = require('./routes/jobRoute');
 const applnRoutes = require('./routes/applnRoute');
 const savedJobRoutes = require('./routes/savedJobRoute');
 const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario';
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'Welcome to DooRFooD API!' });
+});
+
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
 
 const app = express();
 
