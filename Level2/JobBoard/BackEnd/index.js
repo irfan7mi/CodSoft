@@ -12,6 +12,7 @@ const savedJobRoutes = require('./routes/savedJobRoute');
 const UserModel = require('./models/users');
 const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario';
 const app = express();
+app.use(express.json());
 app.get('/', (req, res) => {
   res.json({ success: true, message: 'Welcome to DooRFooD API!' });
 });
@@ -20,12 +21,14 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
+app.use(cors({ origin: 'https://job-board-client-blond.vercel.app' }));
+
 app.use(cors({
-  origin: "*",
-  methods: ['GET', 'POST', 'DELETE'],
-  credentials: true
+  origin: "*", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
 }));
-app.use(express.json());
+
+
 
 const createToken = (id) => {
   return jwt.sign({id}, JWT_SECRET)
