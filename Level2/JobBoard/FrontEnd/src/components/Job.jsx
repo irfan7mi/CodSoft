@@ -1,32 +1,31 @@
 import React, { useState } from 'react'
+import axios from 'axios';
 
-const Job = ({ setCurrentPage }) => {
-  const [jobData] = useState({
-    title: "",
-    company: "",
-    location: "",
-    salary: "",
-    type: "",
-    posted: "",
-    description: ``,
-    responsibilities: [],
-    requirements: [],
-    skills: [],
-    benefits: [],
-    duration: "",
-    contact: ""
-  });
+const Job = ({ setCurrentPage, jobData, jobId, url, user }) => {
+  
 
   const [isApplied, setIsApplied] = useState(false);
-
-  const handleApply = () => {
+  const userId = user._id;
+  const email = user.email;
+  console.log(jobId, email, userId);
+  
+  const handleApply = async (e) => {
     setIsApplied(true);
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${url}/api/application/apply`, {jobId, userId, email} ); 
+      console.log('Application submitted successfully:', response.data);
+    }
+    catch (error) {
+      console.error('Error applying for job:', error);
+    }
   };
 
-  const handleBackToList = () => {
+  const handleBackToList = (e) => {
     setCurrentPage('joblist');
   };
-
+  console.log(isApplied);
+  
   return (
     <div className='job-page'>
       <div className="job-header">
@@ -45,7 +44,7 @@ const Job = ({ setCurrentPage }) => {
         <div className="job-actions">
           <button 
             className={`apply-btn ${isApplied ? 'applied' : ''}`}
-            onClick={handleApply}
+            onClick={(e) => handleApply(e)}
             disabled={isApplied}
           >
             {isApplied ? '✓ Applied' : 'Apply Now'}

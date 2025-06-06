@@ -13,7 +13,7 @@ const jobSchema = new mongoose.Schema({
   benefits: [{ type: String }],
   duration: { type: String, default: 'Permanent' },
   contact: { type: String, required: true },
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  postedBy: { type: String, required: true },
   posted: { type: Date, default: Date.now },
   status: { type: String, default: 'Active' },
   applications: { type: Number, default: 0 }

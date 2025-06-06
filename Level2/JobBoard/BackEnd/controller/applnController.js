@@ -3,14 +3,14 @@ const Job = require('../models/jobs');
 
 const listApplications = async (req, res) => {
   try {
-    const jobs = await Job.find({ postedBy: req.user.userId }).select('_id');
-    const jobIds = jobs.map(job => job._id);
-
-    const applications = await Application.find({ job: { $in: jobIds } })
-      .populate('candidate', 'name experience')
-      .populate('job', 'title');
-
-    res.status(200).json({ applications });
+    const email = req.params.email;
+    const applications = await Application.find({ email })
+    if (!applications.length) {
+      return res.status(404).json({ message: 'No applications found for this email' });
+    }
+    const jobId = applications.map(app => app.jobId);
+    const job = await Job.findById(jobId);
+    res.status(200).json({ applications, job });
   } catch (error) {
     console.error('Error fetching applications:', error);
     res.status(500).json({ message: 'Server error while fetching applications' });
@@ -19,19 +19,19 @@ const listApplications = async (req, res) => {
 
 const applyJob = async (req, res) => {
   try {
-    const { jobId } = req.body;
+    const { jobId, userId, email } = req.body;
     const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
-    const existingApplication = await Application.findOne({ candidate: req.user.userId, job: jobId });
+    const existingApplication = await Application.findOne({jobId});
     if (existingApplication) {
       return res.status(400).json({ message: 'You have already applied for this job' });
     }
     const application = new Application({
-      candidate: req.user.userId,
-      job: jobId,
-      resume: (await User.findById(req.user.userId)).resume
+      userId,
+      jobId,
+      email
     });
     await application.save();
     await Job.findByIdAndUpdate(jobId, { $inc: { applications: 1 } });

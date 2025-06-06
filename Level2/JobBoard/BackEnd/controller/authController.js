@@ -6,114 +6,73 @@ const JWT_SECRET = process.env.JWT_SECRET || "random#secret"
 const validator = require('validator');
 const fs = require('fs');
 const upload = require('../middleware/upload');
+const { log } = require('console');
 
 const signup = async (req, res) => {
   try {
-    const { name, mobile, email, password } = req.body;
-
-    const existingUser = await Candidate.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const candidate = new Candidate({
-      name,
-      mobile,
-      email,
-      password: hashedPassword,
-      role: 'candidate' 
-    });
-
-    await candidate.save();
-
-    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, "random#secret", {
-      expiresIn: '1h'
-    });
-
-    res.status(201).json({
-      user: { name: candidate.name, email: candidate.email, role: candidate.role },
-      token
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error during signup' });
-  }
-};
-
-const createToken = (id) => {
-  return jwt.sign({id}, JWT_SECRET)
-}
-
-const signup1 = async (req, res) => {
-  const {name, mobile, email, password} = req.body
-  try{
-    const existingUser = await Candidate.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+    const { name, email, password, mobile } = req.body;
+    if (!name ||!email ||!password ||!mobile ) {
+      return res.status(400).json({ message: 'Missing required fields' });
     }
     if (!validator.isEmail(email)) {
-      return res.status(400).json({success:false, message:"Please enter valid email address!"});
+      return res.status(400).json({ message: 'Invalid email' });
     }
-    if (password.length<8) {
-      return res.json({success:false, message:"Please enter strong password!"})
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long' });
     }
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-    
-    const newUser = new Candidate({
-      name: name,
-      mobile: mobile,
-      email: email,
+    if (await Candidate.findOne({ email })) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newCandidate = new Candidate({
+      name,
+      email,
       password: hashedPassword,
-      role: 'candidate',
-      cartData: []
-    })
-    let candidate = await newUser.save()
-    const token = createToken(candidate._id)
-    return res.send({user: { name: candidate.name, email: candidate.email, role: candidate.role },
-      token})
+      mobile
+    });
+    await newCandidate.save();
+    const token = jwt.sign({ userId: newCandidate._id }, JWT_SECRET, { expiresIn: '1d' });
+    res.status(201).json({ token });
   }
   catch (error) {
-    res.status(500).json({ message: 'Server error during signup' });
-    console.error("Signup Error:", error); 
+    console.error('Error signing up:', error);
+    res.status(500).json({ message: 'Server error while signing up' });
   }
-};
+}
 
 const login = async (req, res) => {
-  try {
+  try{
     const { email, password } = req.body;
-    console.log(email, password);  
+    if (!email ||!password) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
     const candidate = await Candidate.findOne({ email });
     if (!candidate) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
     const isMatch = await bcrypt.compare(password, candidate.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, JWT_SECRET, {
-      expiresIn: '1h'
-    });
-
-    res.status(200).json({
-      user: { name: candidate.name, email: candidate.email, role: candidate.role },
-      token
-    });
-  } catch (error) {
-    console.error('Server Error:', error);
-    console.log("Request body: ", req.body);
-    res.status(500).json({ message: error.message });
+    const token = jwt.sign({ userId: candidate._id }, JWT_SECRET, { expiresIn: '1d' });
+    res.status(200).json({ token, user: candidate });
   }
-};
+  catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ message: 'Server error while logging in' });
+  }
+}
 
 const getProfile = async (req, res) => {
   try {
-    const candidate = await Candidate.findById(req.candidate.userId).select('-password');
+    const email = req.query.email;
+    const candidate = await Candidate.findOne({ email });
     if (!candidate) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ user });
+    res.status(200).json({ user: candidate });
+    console.log(candidate);
+    
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ message: 'Server error while fetching profile' });

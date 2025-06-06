@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const CandidateDashboard = () => {
+const CandidateDashboard = ({url, user}) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [profile, setProfile] = useState({
     name: '',
@@ -15,12 +15,16 @@ const CandidateDashboard = () => {
     summary: ''
   });
   const [applications, setApplications] = useState([]);
+  const [jobDetails, setJobDetails] = useState({});
   const [savedJobs, setSavedJobs] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [resume, setResume] = useState(null);
   const navigate = useNavigate();
-
+  console.log(applications);
+  const userEmail = user.email;
+  console.log(userEmail);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,9 +34,7 @@ const CandidateDashboard = () => {
           return;
         }
 
-        const profileResponse = await axios.get('https://codsoft-fctc.onrender.com/api/auth/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const profileResponse = await axios.get(`${url}/api/auth/profile?email=${user.email}`);
         setProfile({
           name: profileResponse.data.user.name || '',
           email: profileResponse.data.user.email || '',
@@ -44,39 +46,13 @@ const CandidateDashboard = () => {
           summary: profileResponse.data.user.summary || ''
         });
 
-        const applicationsResponse = await axios.get('https://codsoft-fctc.onrender.com/api/applications/my-applications', {
-          headers: { Authorization: `Bearer ${token}` }
+        const applicationsResponse = await axios.get(`${url}/api/application/list/${userEmail}`);
+        setApplications(applicationsResponse.data.applications);
+        setJobDetails({
+          title: applicationsResponse.data.job.title,
+          salary: applicationsResponse.data.job.salary,
+          company: applicationsResponse.data.job.company
         });
-        setApplications(applicationsResponse.data.applications.map(app => ({
-          id: app._id,
-          jobTitle: app.job.title,
-          company: app.job.company,
-          appliedDate: new Date(app.appliedDate).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }),
-          status: app.status,
-          salary: app.job.salary,
-          jobId: app.job._id
-        })));
-
-        const savedJobsResponse = await axios.get('https://codsoft-fctc.onrender.com/api/saved-jobs/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setSavedJobs(savedJobsResponse.data.savedJobs.map(saved => ({
-          id: saved._id,
-          title: saved.job.title,
-          company: saved.job.company,
-          location: saved.job.location,
-          salary: saved.job.salary,
-          savedDate: new Date(saved.savedDate).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }),
-          jobId: saved.job._id
-        })));
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load dashboard data. Please try again.');
         console.error('Error fetching data:', err);
@@ -109,9 +85,7 @@ const CandidateDashboard = () => {
       if (!token) {
         throw new Error('Please log in to update your profile');
       }
-      const response = await axios.post('https://codsoft-fctc.onrender.com/api/auth/profile', profile, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(`${url}/api/auth/profile`, profile);
       setProfile({
         name: response.data.user.name,
         email: response.data.user.email,
@@ -129,52 +103,6 @@ const CandidateDashboard = () => {
     }
   };
 
-  const handleResumeUpload = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Please log in to upload a resume');
-      }
-      if (!resume) {
-        throw new Error('Please select a resume file');
-      }
-      const formData = new FormData();
-      formData.append('resume', resume);
-      await axios.post('https://codsoft-fctc.onrender.com/api/auth/upload-resume', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      setSuccess('Resume uploaded successfully!');
-      setResume(null);
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to upload resume. Please try again.');
-      console.error('Error uploading resume:', error);
-    }
-  };
-
-  const handleWithdrawApplication = async (applicationId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to withdraw an application.');
-        return;
-      }
-      await axios.delete(`https://codsoft-fctc.onrender.com/api/applications/withdraw/${applicationId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setApplications(applications.filter(app => app.id !== applicationId));
-      setSuccess('Application withdrawn successfully!');
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to withdraw application. Please try again.');
-      console.error('Error withdrawing application:', error);
-    }
-  };
-
   const handleApplyJob = async (jobId) => {
     try {
       const token = localStorage.getItem('token');
@@ -182,9 +110,7 @@ const CandidateDashboard = () => {
         setError('Please log in to apply for a job.');
         return;
       }
-      const response = await axios.post('https://codsoft-fctc.onrender.com/api/applications/apply', { jobId }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(`${url}/api/application/apply`, { jobId });
       setApplications([...applications, {
         id: response.data.application._id,
         jobTitle: response.data.application.job.title,
@@ -203,24 +129,6 @@ const CandidateDashboard = () => {
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to apply for job. Please try again.');
       console.error('Error applying for job:', error);
-    }
-  };
-
-  const handleRemoveSavedJob = async (jobId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to remove a saved job.');
-        return;
-      }
-      await axios.delete(`https://codsoft-fctc.onrender.com/api/saved-jobs/remove/${jobId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setSavedJobs(savedJobs.filter(saved => saved.jobId !== jobId));
-      setSuccess('Job removed from saved list!');
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to remove saved job. Please try again.');
-      console.error('Error removing saved job:', error);
     }
   };
 
@@ -285,14 +193,14 @@ const CandidateDashboard = () => {
         {applications.map(app => (
           <div key={app.id} className="application-card">
             <div className="application-header">
-              <h4>{app.jobTitle}</h4>
+              <h4>{jobDetails.title}</h4>
               <span className={`application-status ${app.status.toLowerCase().replace(' ', '-')}`}>
                 {app.status}
               </span>
             </div>
             <div className="application-details">
-              <p className="company">{app.company}</p>
-              <p className="salary">{app.salary}</p>
+              <p className="company">{jobDetails.company}</p>
+              <p className="salary">{jobDetails.salary}</p>
               <p className="applied-date">Applied: {app.appliedDate}</p>
             </div>
             <div className="application-actions">
@@ -468,12 +376,6 @@ const CandidateDashboard = () => {
           My Applications
         </button>
         <button
-          className={activeTab === 'saved' ? 'nav-btn active' : 'nav-btn'}
-          onClick={() => setActiveTab('saved')}
-        >
-          Saved Jobs
-        </button>
-        <button
           className={activeTab === 'profile' ? 'nav-btn active' : 'nav-btn'}
           onClick={() => setActiveTab('profile')}
         >
@@ -484,7 +386,6 @@ const CandidateDashboard = () => {
       <div className="dashboard-content">
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'applications' && renderApplications()}
-        {activeTab === 'saved' && renderSavedJobs()}
         {activeTab === 'profile' && renderProfile()}
       </div>
     </div>

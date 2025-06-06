@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useNavigate } from'react-router-dom';
 
-const JobList = ({ setCurrentPage }) => {
+const JobList = ({ setCurrentPage, jobId, setJobId, url, setJobData}) => {
   const [isApplied, setIsApplied] = useState(false);
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([
     {
       id: "",
@@ -24,9 +26,7 @@ const JobList = ({ setCurrentPage }) => {
         if (!token) {
           return;
         }
-        const response = await axios.get('https://codsoft-fctc.onrender.com/api/jobs/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get(`${url}/api/jobs/list`);
         setJobs(response.data.jobs.map(job => ({
           id: job._id,
           title: job.title,
@@ -54,15 +54,11 @@ const JobList = ({ setCurrentPage }) => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const applicationResponse = await axios.get('https://codsoft-fctc.onrender.com/api/applications/my-applications', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const applicationResponse = await axios.get(`${url}/api/applications/my-applications`);
         const hasApplied = applicationResponse.data.applications.some(app => app.job._id === job.id);
         setIsApplied(hasApplied);
 
-        const savedResponse = await axios.get('https://codsoft-fctc.onrender.com/api/saved-jobs/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const savedResponse = await axios.get(`${url}/api/saved-jobs/list`);
         const hasSaved = savedResponse.data.savedJobs.some(saved => saved.job._id === job.id);
         setIsSaved(hasSaved);
       } catch (err) {
@@ -84,9 +80,8 @@ const JobList = ({ setCurrentPage }) => {
       }
 
       const response = await axios.post(
-        'https://codsoft-fctc.onrender.com/api/applications/apply',
-        { jobId: job.id },
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${url}/api/applications/apply`,
+        { jobId: jobs.id }
       );
 
       setIsApplied(true);
@@ -95,32 +90,6 @@ const JobList = ({ setCurrentPage }) => {
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to apply for job. Please try again.');
       console.error('Error applying for job:', error);
-    }
-  };
-
-  const handleSave = async () => {
-    setError('');
-    setSuccess('');
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to save this job.');
-        navigate('/login');
-        return;
-      }
-
-      const response = await axios.post(
-        'https://codsoft-fctc.onrender.com/api/jobs/save',
-        { jobId: job.id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setIsSaved(true);
-      setSuccess('Job saved successfully!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to save job. Please try again.');
-      console.error('Error saving job:', error);
     }
   };
 
@@ -137,8 +106,19 @@ const JobList = ({ setCurrentPage }) => {
     return matchesSearch && matchesFilter;
   });
 
-  const handleJobClick = () => {
-    setCurrentPage('job');
+  const handleJobClick = async (e, id) => {
+    e.preventDefault();
+    try{
+      const response = await axios.get(`${url}/api/job/view/${id}`);
+      console.log(response.data.job);
+      setJobData(response.data.job);
+      setJobId(response.data.job._id);
+      setCurrentPage('job');
+      navigate(`/job/${jobId}`);
+    }
+    catch (error) {
+      console.error('Error fetching job details:', error);
+    }
   };
 
   return (
@@ -189,7 +169,7 @@ const JobList = ({ setCurrentPage }) => {
       <div className="job-list-container">
         {filteredJobs.length > 0 ? (
           filteredJobs.map(job => (
-            <div key={job.id} className="job-card" onClick={handleJobClick}>
+            <div key={job.id} className="job-card" onClick={(e) => handleJobClick(e, job.id)}>
               <div className="job-card-header">
                 <div className="job-title-section">
                   <h3>{job.title}</h3>

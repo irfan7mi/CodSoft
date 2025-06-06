@@ -10,22 +10,18 @@ const postJob = async (req, res) => {
       salary,
       type,
       description,
-      responsibilities,
-      requirements,
-      skills,
-      benefits,
+      responsibilities = [],
+      requirements = [],
+      skills = [],
+      benefits = [],
       duration,
-      contact
+      contact,
+      postedBy
     } = req.body;
 
-    if (!title || !company || !location || !salary || !type || !description || !requirements) {
+    if (!title || !company || !location || !salary || !type || !description || !requirements.length) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-
-    const responsibilitiesArray = responsibilities ? responsibilities.split(',').map(item => item.trim()) : [];
-    const requirementsArray = requirements ? requirements.split(',').map(item => item.trim()) : [];
-    const skillsArray = skills ? skills.split(',').map(item => item.trim()) : [];
-    const benefitsArray = benefits ? benefits.split(',').map(item => item.trim()) : [];
 
     const job = new Job({
       title,
@@ -34,13 +30,13 @@ const postJob = async (req, res) => {
       salary,
       type,
       description,
-      responsibilities: responsibilitiesArray,
-      requirements: requirementsArray,
-      skills: skillsArray,
-      benefits: benefitsArray,
+      responsibilities,
+      requirements,
+      skills,
+      benefits,
       duration: duration || 'Permanent',
       contact,
-      postedBy: req.user.userId, 
+      postedBy,
       posted: new Date()
     });
 
@@ -66,7 +62,7 @@ const listJob = async (req, res) => {
 
 const viewJob = async (req, res) => {
   try{
-    const job = await Job.findById(req.params.id);
+    const job = await Job.findById(req.params.jobId);
     if(!job){
       res.status(404).json({message: 'Job not found'});
     }

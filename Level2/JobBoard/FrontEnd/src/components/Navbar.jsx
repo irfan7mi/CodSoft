@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-const Navbar = ({ setCurrentPage, setBoolLogin, user, setUser }) => {
+const Navbar = ({ setCurrentPage, setBoolLogin, user, setUser, boolLogin, loginState }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -13,6 +13,8 @@ const Navbar = ({ setCurrentPage, setBoolLogin, user, setUser }) => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
   };
+  console.log(loginState);
+  
 
   return (
     <nav className='navbar-section'>
@@ -30,16 +32,7 @@ const Navbar = ({ setCurrentPage, setBoolLogin, user, setUser }) => {
         </div>
         
         <div className="navbar-auth">
-          {user ? (
-            <div className="user-menu">
-              <span className="user-name">Hi, {user.name}</span>
-              <p className="login-link" onClick={() => {setBoolLogin(false); setIsMobileMenuOpen(false); setUser(null);}}>
-                Logout
-              </p>
-            </div>
-          ) : (
-            <p className="login-link" onClick={() => {setBoolLogin(true); setIsMobileMenuOpen(false); navigate('/login');}}>Login</p>
-          )}
+          <p className="login-link" onClick={() => {setBoolLogin(true); setIsMobileMenuOpen(false); navigate('/login');}}>{!loginState ? 'Login' : 'Logout' }</p>
         </div>
         
         <div className="mobile-menu-toggle" onClick={toggleMobileMenu}>

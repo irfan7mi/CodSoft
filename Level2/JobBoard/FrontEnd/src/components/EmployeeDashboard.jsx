@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const EmployeeDashboard = () => {
+const EmployeeDashboard = ({url, user}) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -21,6 +21,7 @@ const EmployeeDashboard = () => {
     responsibilities: '',
     requirements: '',
     skills: '',
+    postedBy: user.email,
     benefits: '',
     duration: '',
     contact: ''
@@ -34,9 +35,7 @@ const EmployeeDashboard = () => {
           setError('Please log in to view jobs.');
           return;
         }
-        const response = await axios.get('https://codsoft-fctc.onrender.com/api/jobs/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get(`${url}/api/jobs/list`);
         setJobs(response.data.jobs.map(job => ({
           id: job._id,
           title: job.title,
@@ -64,9 +63,7 @@ const EmployeeDashboard = () => {
           setError('Please log in to view applications.');
           return;
         }
-        const response = await axios.get('https://codsoft-fctc.onrender.com/api/applications/list', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get(`${url}/api/applications/list`);
         setApplications(response.data.applications.map(app => ({
           id: app._id,
           candidateName: app.candidate.name,
@@ -104,9 +101,7 @@ const EmployeeDashboard = () => {
         throw new Error('Please log in to post a job');
       }
 
-      const response = await axios.post('https://codsoft-fctc.onrender.com/api/jobs/post', newJob, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(`${url}/api/jobs/post`, newJob);
 
       setJobs([...jobs, {
         id: response.data.job._id,
@@ -153,9 +148,7 @@ const EmployeeDashboard = () => {
         throw new Error('Please log in to update a job');
       }
 
-      const response = await axios.put(`https://codsoft-fctc.onrender.com/api/jobs/update/${editJobId}`, newJob, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.put(`${url}/api/jobs/update/${editJobId}`, newJob);
 
       setJobs(jobs.map(job =>
         job.id === editJobId ? {
@@ -201,9 +194,7 @@ const EmployeeDashboard = () => {
         setError('Please log in to view job details.');
         return;
       }
-      const response = await axios.get(`https://codsoft-fctc.onrender.com/api/jobs/view/${jobId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(`${url}/api/jobs/view/${jobId}`);
       setNewJob({
         title: response.data.job.title,
         company: response.data.job.company,
@@ -232,9 +223,7 @@ const EmployeeDashboard = () => {
         setError('Please log in to delete a job.');
         return;
       }
-      await axios.delete(`https://codsoft-fctc.onrender.com/api/jobs/delete/${jobId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.delete(`${url}/api/jobs/delete/${jobId}`);
       setJobs(jobs.filter(job => job.id !== jobId));
       setSuccess('Job deleted successfully!');
     } catch (err) {
@@ -528,12 +517,6 @@ const EmployeeDashboard = () => {
           Job Posts
         </button>
         <button
-          className={activeTab === 'applications' ? 'nav-btn active' : 'nav-btn'}
-          onClick={() => setActiveTab('applications')}
-        >
-          Applications
-        </button>
-        <button
           className={activeTab === 'post-job' ? 'nav-btn active' : 'nav-btn'}
           onClick={() => { setActiveTab('post-job'); setEditJobId(null); setNewJob({ title: '', company: '', location: '', salary: '', type: '', description: '', responsibilities: '', requirements: '', skills: '', benefits: '', duration: '', contact: '' }); }}
         >
@@ -544,7 +527,6 @@ const EmployeeDashboard = () => {
       <div className="dashboard-content">
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'job-posts' && renderJobPosts()}
-        {activeTab === 'applications' && renderApplications()}
         {activeTab === 'post-job' && renderPostJob()}
       </div>
     </div>

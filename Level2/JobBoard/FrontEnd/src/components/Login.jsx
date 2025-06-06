@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ boolLogin, setBoolLogin, setUser }) => {
+const Login = ({ boolLogin, setBoolLogin, setUser, setCurrentPage, setLoginState, url }) => {
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,27 +23,21 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-    const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    if(response.data.success){
-      const userData = {
-        name: response.data.user.name || 'John Doe',
-        email: response.data.user.email || 'johndoe@example.com',
-        password: response.data.user.password || 'password',
-        role: response.data.user.role || 'candidate'
-      };
+    try {
+      const endpoint = isSignUp? '/api/auth/signup' : '/api/auth/login';
+      const response = await axios.post(`${url}${endpoint}`, formData);
+      console.log(response.data);
       localStorage.setItem('token', response.data.token);
-      setUser(userData);
+      setUser(response.data.user);
+      setCurrentPage('home');
       setBoolLogin(false);
+      setLoginState(true);
       navigate('/');
+    } catch (error) {
+      console.error(error);
+      setError('Invalid credentials. Please try again.');
     }
-    else
-      setError('An error occurred. Please try again.');
-  };
+  }
 
   return (
     <div className='login-page'>

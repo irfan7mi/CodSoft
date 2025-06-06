@@ -7,7 +7,6 @@ const applnRoutes = require('./routes/applnRoute');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const savedJobRoutes = require('./routes/savedJobRoute');
 const UserModel = require('./models/users');
 const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario';
 const app = express();
@@ -18,11 +17,7 @@ app.get('/', (req, res) => {
   res.json({ success: true, message: 'Welcome to DooRFooD API!' });
 });
 
-app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
-});
-
-app.use(cors({ origin: 'https://job-board-client-blond.vercel.app' }));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use(cors({
   origin: "*", 
@@ -35,8 +30,8 @@ mongoose.connect(url)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/job', jobRoutes);
 app.use('/api/application', applnRoutes);
-app.use('/api/saved-jobs', savedJobRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

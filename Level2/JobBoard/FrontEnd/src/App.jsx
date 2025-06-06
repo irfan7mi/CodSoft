@@ -11,31 +11,42 @@ import Navbar from './components/Navbar'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 function App() {
+  const url = 'http://localhost:8000';
+  const [jobId, setJobId] = useState(null);
   const [jobData, setJobData] = useState({
-    tota_applns: "",
-    tot_jobs: "",
-    tot_condidate: "",
-    tot_company :"",
-    success_rate: "" 
-  })
+      title: "",
+      company: "",
+      location: "",
+      salary: "",
+      type: "",
+      posted: "",
+      description: ``,
+      responsibilities: [],
+      requirements: [],
+      skills: [],
+      benefits: [],
+      duration: "",
+      contact: ""
+    });
   const [boolLogin, setBoolLogin] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [user, setUser] = useState(null);
-
+  const [loginState, setLoginState] = useState(false);
+  
   const renderPage = () => {
     switch(currentPage) {
       case 'home':
         return <Routes><Route path='/' element={<Home />}/></Routes>;
       case 'joblist':
-        return <Routes><Route path='/job-list' element={<JobList setCurrentPage={setCurrentPage} />}/></Routes>;
+        return <Routes><Route path='/job-list' element={<JobList setCurrentPage={setCurrentPage} setJobData={setJobData} jobId={jobId} setJobId={setJobId} url={url}/>}/></Routes>;
       case 'job':
-        return <Routes><Route path='/job' element={<Job setCurrentPage={setCurrentPage} />}/></Routes>;
+        return <Routes><Route path={`/job/${jobId}`} element={<Job setCurrentPage={setCurrentPage} jobId={jobId} jobData={jobData} url={url} user={user}/>}/></Routes>;
       case 'employee':
-        return <Routes><Route path='/employee' element={<EmployeeDashboard />}/></Routes>;
+        return <Routes><Route path='/employee' element={<EmployeeDashboard url={url} user={user}/>}/></Routes>;
       case 'candidate':
-        return <Routes><Route path='/candidate' element={<CandidateDashboard />}/></Routes>;
+        return <Routes><Route path='/candidate' element={<CandidateDashboard url={url} user={user}/>}/></Routes>;
       default:
-        return <Routes><Route path='/' element={<Home />}/></Routes>;
+        return <Routes><Route path='/' element={<Home/>}/></Routes>;
     }
   };
 
@@ -44,11 +55,11 @@ function App() {
     <BrowserRouter>
       {boolLogin ? 
         <Routes>
-          <Route path='/login' element={<Login boolLogin={boolLogin} setBoolLogin={setBoolLogin} setUser={setUser} />}/>
+          <Route path='/login' element={<Login boolLogin={boolLogin} setBoolLogin={setBoolLogin} setUser={setUser} setCurrentPage={setCurrentPage} setLoginState={setLoginState} url={url}/>}/>
         </Routes>
         :
         <>
-          <Navbar setCurrentPage={setCurrentPage} setBoolLogin={setBoolLogin} user={user} setUser={setUser} />
+          <Navbar setCurrentPage={setCurrentPage} boolLogin={boolLogin}  setBoolLogin={setBoolLogin} user={user} setUser={setUser} loginState={loginState} />
           <div className="app">
             {renderPage()}
           </div>

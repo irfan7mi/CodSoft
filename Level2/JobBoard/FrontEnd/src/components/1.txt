@@ -177,3 +177,37 @@ const Job = ({ setCurrentPage }) => {
 }
 
 export default Job
+
+
+
+
+
+[
+   
+
+  ,
+  ,
+  {
+    "title": "Mobile App Developer",
+    "company": "AppSquad",
+    "location": "Mumbai, India",
+    "salary": "₹10,00,000 - ₹16,00,000",
+    "type": "Full-time",
+    "posted": "3 days ago",
+    "description": "Flutter developer needed for cross-platform apps...",
+    "responsibilities": [
+      "Develop iOS and Android apps",
+      "Work with API integrations"
+    ],
+    "requirements": [
+      "2+ years with Flutter",
+      "Experience publishing apps"
+    ],
+    "skills": ["Flutter", "Dart", "Firebase"],
+    "benefits": ["Remote work", "Flexible schedule"],
+    "duration": "Permanent",
+    "contact": "careers@appsquad.com",
+    "postedBy": "irfan@test@gmail.com"
+  },
+
+]
