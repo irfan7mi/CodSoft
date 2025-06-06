@@ -22,10 +22,9 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    try {
-      const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-      const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData);
-      
+    const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
+    const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData);
+    if(response.data.success){
       const userData = {
         name: response.data.user.name || 'John Doe',
         email: response.data.user.email,
@@ -35,9 +34,10 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
       setUser(userData);
       setBoolLogin(false);
       navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
     }
+    else
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+  }
   };
 
   return (

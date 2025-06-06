@@ -79,7 +79,7 @@ app.post("/api/auth/signup",async (req, res) => {
     })
     let user = await newUser.save()
     const token = createToken(user._id)
-    return res.send({user: { name: user.name, email: user.email, role: user.role },
+    return res.send({user: { success: true, name: user.name, email: user.email, role: user.role },
       token})
   }
   catch (e) {
