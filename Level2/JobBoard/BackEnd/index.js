@@ -30,71 +30,11 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 
-
-
-const createToken = (id) => {
-  return jwt.sign({id}, JWT_SECRET)
-}
-
-app.post("/login", async (req, res) => {
-  const{email, password} = req.body
-  try{
-    let user = await UserModel.findOne({email})
-    if (!user) {
-      return res.json({success: false, message: "Admin doesn't exist!"})
-    }
-    const isMatch = bcrypt.compare(email, password)
-    if (!isMatch) {
-      return res.json({success: false, message: "Invalid credentials"})
-    }
-    const token = createToken(user._id)
-    return res.send({success:true, message: "Login successfully", token})
-  }
-  catch (e) {
-    console.log(e)
-    res.send({success: false, message: "Error"})
-  }
-})
-
-app.post("/signup",async (req, res) => {
-  const {name, mobile, email, password} = req.body
-  try{
-    const exist = await UserModel.findOne({email})
-    if (exist) {
-      return res.json({success:false, message:"User already exist!"})
-    }
-    if (!validator.isEmail(email)) {
-      return res.json({success:false, message:"Please enter valid email address!"})
-    }
-    if (password.length<8) {
-      return res.json({success:false, message:"Please enter strong password!"})
-    }
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-    
-    const newUser = new UserModel({
-      name: name,
-      mobile: mobile,
-      email: email,
-      password: hashedPassword,
-      role: 'candidate' 
-    })
-    let user = await newUser.save()
-    const token = createToken(user._id)
-    return res.send({user: { success: true, name: user.name, email: user.email, role: user.role },
-      token})
-  }
-  catch (e) {
-    console.log(e)
-    res.send({success:false, message: "Error"})
-  }
-})
-
 mongoose.connect(url)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-
+app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/application', applnRoutes);
 app.use('/api/saved-jobs', savedJobRoutes);

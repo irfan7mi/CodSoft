@@ -23,7 +23,7 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
     e.preventDefault();
     setError('');
     const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-    const response = await axios.post(`http://localhost:8000${endpoint}`, formData);
+    const response = await axios.post(`https://job-board-server-nine.vercel.app${endpoint}`, formData);
     if(response.data.success){
       const userData = {
         name: response.data.user.name || 'John Doe',
