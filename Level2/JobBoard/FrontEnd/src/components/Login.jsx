@@ -36,7 +36,7 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
       navigate('/');
     }
     else
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      setError('An error occurred. Please try again.');
   };
 
   return (
