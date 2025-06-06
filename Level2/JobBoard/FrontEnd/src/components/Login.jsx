@@ -24,14 +24,9 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
     e.preventDefault();
     setError('');
     const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-    const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, {
-      name: formData.name,
-      email: formData.email,
-      mobile: formData.mobile,
-      password: formData.password
-    }, {
+    const response = await axios.post(`https://codsoft-fctc.onrender.com${endpoint}`, formData, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'multipart/form-data'
       }
     });
     if(response.data.success){
