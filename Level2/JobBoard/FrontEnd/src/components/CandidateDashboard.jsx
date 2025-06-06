@@ -337,7 +337,7 @@ const CandidateDashboard = ({url, user}) => {
           </button>
         </div>
       </form>
-      <form className="resume-form" onSubmit={handleResumeUpload}>
+      <form className="resume-form">
         <div className="form-group">
           <label>Upload Resume</label>
           <input

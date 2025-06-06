@@ -241,7 +241,7 @@ body {
 .footer-section {
   background: #2d3748;
   color: white;
-  padding: 60px 20px 20px;
+  padding: 60px 20px 30px;
 }
 
 .footer-container {
@@ -250,10 +250,16 @@ body {
 }
 
 .footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 40px;
   margin-bottom: 40px;
+}
+
+.footer-brand {
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 
 .footer-brand h2 {
@@ -267,7 +273,8 @@ body {
 
 .footer-description {
   color: #a0aec0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .social-links {
@@ -278,12 +285,27 @@ body {
 
 .social-link {
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .social-link:hover {
   color: #667eea;
+}
+
+.footer-links {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.footer-column {
+  flex: 1 1 200px;
+  min-width: 180px;
 }
 
 .footer-column h4 {
@@ -294,6 +316,7 @@ body {
 
 .footer-list {
   list-style: none;
+  padding: 0;
 }
 
 .footer-list li {
@@ -303,6 +326,7 @@ body {
 .footer-list span {
   color: #a0aec0;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .footer-list span:hover {
@@ -323,6 +347,7 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex: 1 1 300px;
 }
 
 .contact-icon {
@@ -336,9 +361,11 @@ body {
   margin-bottom: 5px;
 }
 
-.contact-details a, .contact-details p {
+.contact-details a,
+.contact-details p {
   color: #a0aec0;
   font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .contact-details a:hover {
@@ -372,9 +399,27 @@ body {
 .badge {
   background: #667eea;
   color: white;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 5px;
   font-size: 0.8rem;
+}
+
+/* Responsive: Stack columns below 768px */
+@media (max-width: 768px) {
+  .footer-content,
+  .footer-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-bottom-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-item {
+    flex: 1 1 100%;
+  }
 }
 
 /* Home Page Styles */

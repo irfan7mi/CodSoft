@@ -236,24 +236,24 @@ const EmployeeDashboard = ({url, user}) => {
     <div className="dashboard-overview">
       <div className="stats-grid">
         <div className="stat-card">
-          <h3>{applications.length}</h3>
+          <h3>10</h3>
           <p>Total Applications</p>
-          <span className="stat-change positive">+{applications.length} this week</span>
+          <span className="stat-change positive">+10 this week</span>
         </div>
         <div className="stat-card">
-          <h3>{jobs.filter(job => job.status === 'Active').length}</h3>
+          <h3>7</h3>
           <p>Active Job Posts</p>
           <span className="stat-change neutral">No change</span>
         </div>
         <div className="stat-card">
-          <h3>{applications.filter(app => app.status === 'Interview Scheduled').length}</h3>
+          <h3>4</h3>
           <p>Interviews Scheduled</p>
-          <span className="stat-change positive">+{applications.filter(app => app.status === 'Interview Scheduled').length} this week</span>
+          <span className="stat-change positive">+4 this week</span>
         </div>
         <div className="stat-card">
-          <h3>{applications.filter(app => app.status === 'Hired').length}</h3>
+          <h3>2</h3>
           <p>Recent Hires</p>
-          <span className="stat-change positive">+{applications.filter(app => app.status === 'Hired').length} this month</span>
+          <span className="stat-change positive">+3 this month</span>
         </div>
       </div>
 
