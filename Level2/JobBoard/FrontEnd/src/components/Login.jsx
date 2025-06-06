@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { post } from '../../../BackEnd/routes/authRoute';
 
 const Login = ({ boolLogin, setBoolLogin, setUser }) => {
   const navigate = useNavigate();
