@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Candidate = require('../models/users');
 const path = require('path');
+const JWT_SECRET = process.env.JWT_SECRET || "random#secret"
 const validator = require('validator');
 const fs = require('fs');
 const upload = require('../middleware/upload');
@@ -90,7 +91,7 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, 'your_jwt_secret', {
+    const token = jwt.sign({ userId: candidate._id, email: candidate.email, role: candidate.role }, JWT_SECRET, {
       expiresIn: '1h'
     });
 
@@ -99,8 +100,9 @@ const login = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Server Error:', err);
-    res.status(500).json({ message: err.message });
+    console.error('Server Error:', error);
+    console.log("Request body: ", req.body);
+    res.status(500).json({ message: error.message });
   }
 };
 

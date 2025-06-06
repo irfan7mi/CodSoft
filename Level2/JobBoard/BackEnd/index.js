@@ -7,7 +7,6 @@ const applnRoutes = require('./routes/applnRoute');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || "random#secret"
 const savedJobRoutes = require('./routes/savedJobRoute');
 const UserModel = require('./models/users');
 const url = process.env.MONGO_URI || 'mongodb+srv://mi2268242:q0zQ2HuspFPfohf0@doorfood.gxuxa.mongodb.net/?retryWrites=true&w=majority&appName=bazario';
