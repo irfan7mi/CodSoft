@@ -18,7 +18,8 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
       setFormData(user => ({...user, [name]:value}))
   }
   const [error, setError] = useState('');
-
+  console.log("Email: ",formData.email);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
