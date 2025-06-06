@@ -35,7 +35,7 @@ const createToken = (id) => {
   return jwt.sign({id}, JWT_SECRET)
 }
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/login", async (req, res) => {
   const{email, password} = req.body
   try{
     let user = await UserModel.findOne({email})
@@ -55,7 +55,7 @@ app.post("/api/auth/login", async (req, res) => {
   }
 })
 
-app.post("/api/auth/signup",async (req, res) => {
+app.post("/signup",async (req, res) => {
   const {name, mobile, email, password} = req.body
   try{
     const exist = await UserModel.findOne({email})
