@@ -1,37 +1,31 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { post } from '../../../BackEnd/routes/authRoute';
 
 const Login = ({ boolLogin, setBoolLogin, setUser }) => {
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    mobile: '',
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
+      name: "",
+      mobile: "",
+      email: "",
+      password: ""
+  })
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+      const name = e.target.name
+      const value = e.target.value
+      setFormData(user => ({...user, [name]:value}))
+  }
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
       const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
-      const response = await fetch(`https://codsoft-fctc.onrender.com${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await post(`https://codsoft-fctc.onrender.com${endpoint}`, formData);
       
       const userData = {
         name: response.data.user.name || 'John Doe',
