@@ -6,7 +6,7 @@ const validator = require('validator');
 const fs = require('fs');
 const upload = require('../middleware/upload');
 
-const signup1 = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { name, mobile, email, password } = req.body;
 
@@ -44,7 +44,7 @@ const createToken = (id) => {
   return jwt.sign({id}, JWT_SECRET)
 }
 
-const signup = async (req, res) => {
+const signup1 = async (req, res) => {
   const {name, mobile, email, password} = req.body
   try{
     const existingUser = await Candidate.findOne({ email });
