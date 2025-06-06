@@ -32,7 +32,8 @@ const Login = ({ boolLogin, setBoolLogin, setUser }) => {
     if(response.data.success){
       const userData = {
         name: response.data.user.name || 'John Doe',
-        email: response.data.user.email,
+        email: response.data.user.email || 'johndoe@example.com',
+        password: response.data.user.password || 'password',
         role: response.data.user.role || 'candidate'
       };
       localStorage.setItem('token', response.data.token);
